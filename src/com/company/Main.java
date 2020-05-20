@@ -3,9 +3,14 @@ package com.company;
 import Menu.MainMenu;
 import Menu.MemberMenu;
 import Menu.StaffMenu;
+import Movie.Movie;
+import Movie.MovieType;
+import Movie.MovieCollection;
 import User.Member;
 import User.MemberCollection;
 
+import javax.sound.midi.Soundbank;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -19,6 +24,10 @@ public class Main {
         MemberMenu memberMenu = new MemberMenu();
         MainMenu mainMenu = new MainMenu();
 
+        MovieType movieType = new MovieType();
+
+        MovieCollection movieList = new MovieCollection();
+
         mainMenu.getMenu();
         Scanner scan1 = new Scanner(System.in);
         System.out.print("Please enter your choice: ");
@@ -27,14 +36,40 @@ public class Main {
             choice = scan1.nextInt();
             switch (choice){
                 case 1:
+                    staffMenu.StaffLogin();
                     staffMenu.getMenu();
-                    System.out.print("Please enter your choice: ");
                     inner: while (true){
+                        System.out.print("Please enter your choice: ");
                         choice = scan1.nextInt();
                         if (choice == -2) break inner;
                         switch (choice){
                             case 1:
+                                Scanner movieInput = new Scanner(System.in);
+                                int numberOfCopies;
+                                Movie newMovie;
+                                Object[] staffInputs = staffMenu.newMovieInputs();
+                                movieList.addMovieNode((Movie)staffInputs[0],(int)staffInputs[1]);
+                                System.out.println("Movie added! Current movie list:");
+                                movieList.getAllMovies(movieList.getRootMovie());
+                                staffMenu.nextMove();
+                                int option = movieInput.nextInt();
+                                switch (option){
+                                    case 1:
+                                        staffMenu.getMenu();
+                                        continue inner;
+                                    case 2:
+                                        break inner;
+                                    case 3:
+                                        return;
+                                }
                                 break;
+                            case 2:
+                                Scanner movieDeleteInput = new Scanner(System.in);
+                                System.out.print("Please type in the movie title: ");
+                                String titleDelete = movieDeleteInput.nextLine();
+                                Boolean result = movieList.deleteMovie(titleDelete);
+                                System.out.println(result ? "The movie is deleted!" : "Sorry, the movie is not exist!");
+                                break ;
                             case 3:
                                 Scanner scan3 = new Scanner(System.in);
                                 System.out.println("Please enter the user credentials: ");
@@ -64,6 +99,7 @@ public class Main {
                                 break;
                             default:
                                 System.out.println("Invalid choice, please choose again!");
+                                staffMenu.getMenu();
                                 System.out.print("Please enter your choice :");
                         }
                     }
@@ -102,6 +138,6 @@ public class Main {
                     System.out.print("Please enter your choice :");
             }
         }
-
+        System.out.println("==========================THANK YOU FOR USING OUR SOFTWARE!==========================");
     }
 }

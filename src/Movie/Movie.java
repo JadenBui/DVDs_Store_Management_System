@@ -1,12 +1,11 @@
 package Movie;
-
 public class Movie {
     private String title;
     private String starring;
     private String director;
     private String duration;
-    private String genre;
-    private String classification;
+    private MovieType.Genre genre;
+    private MovieType.Classification classification;
     private String releaseDate;
 
     public String getTitle() {
@@ -41,19 +40,19 @@ public class Movie {
         this.duration = duration;
     }
 
-    public String getGenre() {
+    public MovieType.Genre getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(MovieType.Genre genre) {
         this.genre = genre;
     }
 
-    public String getClassification() {
+    public MovieType.Classification getClassification() {
         return classification;
     }
 
-    public void setClassification(String classification) {
+    public void setClassification(MovieType.Classification classification) {
         this.classification = classification;
     }
 
@@ -65,7 +64,7 @@ public class Movie {
         this.releaseDate = releaseDate;
     }
 
-    public Movie(String title, String starring, String director, String duration, String genre, String classification, String releaseDate){
+    public Movie(String title, String starring, String director, String duration, MovieType.Genre genre, MovieType.Classification classification, String releaseDate){
         this.title = title;
         this.starring = starring;
         this.director = director;

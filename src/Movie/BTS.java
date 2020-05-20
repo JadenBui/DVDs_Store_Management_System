@@ -61,6 +61,7 @@ public class BTS {
             }
             //Node to be deleted has 2 children
         }else if(focusNode.left != null && focusNode.right != null){
+            //Find the replacement node in order successor
             if(focusNode.right.left == null){
                 //Preserve the left children of the deleted node
                 focusNode.key = focusNode.right.key;
@@ -68,6 +69,7 @@ public class BTS {
                 //Carry on the right branch of the replacement node
                 focusNode.right = focusNode.right.right;
             }else{
+                //Find the node that is the smallest in order successor
                 Node replacementNode = focusNode.right;
                 while(replacementNode.left != null){
                     parent = replacementNode;
@@ -75,6 +77,7 @@ public class BTS {
                 }
                 focusNode.key = replacementNode.key;
                 focusNode.value = replacementNode.value;
+                //Carry on the right branch of the replacement node
                 parent.left = replacementNode.right;
             }
         }

@@ -4,6 +4,7 @@ public class Member extends User {
     private String fullName;
     private String address;
     private String phone;
+    private String[] borrowedMovies;
     private int id;
     private static int memberNumber = 0;
     public Member(String username, int password, String fullName, String address, String phone) {
@@ -12,6 +13,7 @@ public class Member extends User {
         this.address = address;
         this.phone = phone;
         this.id = memberNumber++;
+        this.borrowedMovies = new String[10];
     }
 
     public String getFullName() {
