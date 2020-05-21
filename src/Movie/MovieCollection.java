@@ -95,8 +95,8 @@ public class MovieCollection {
         Node focusNode = root;
         while(true){
             System.out.println(focusNode.movie.getTitle());
-            if(focusNode.movie.getTitle().compareTo(movieTitle) == 0){return focusNode;}
-            if(movieTitle.compareTo(focusNode.movie.getTitle()) < 0){
+            if(focusNode.movie.getTitle().toLowerCase().compareTo(movieTitle.toLowerCase()) == 0){return focusNode;}
+            if(movieTitle.toLowerCase().compareTo(focusNode.movie.getTitle().toLowerCase()) < 0){
                 focusNode = focusNode.leftNode;
             }else{
                 focusNode = focusNode.rightNode;
@@ -185,6 +185,8 @@ public class MovieCollection {
 
         movieList.deleteMovie("AmazingWomen Movie");
         movieList.getAllMovies(movieList.root);
+
+
     }
 
 }

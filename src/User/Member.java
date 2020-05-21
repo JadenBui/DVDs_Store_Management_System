@@ -1,10 +1,13 @@
 package User;
 
+import java.util.Arrays;
+
 public class Member extends User {
     private String fullName;
     private String address;
     private String phone;
     private String[] borrowedMovies;
+
     private int id;
     private static int memberNumber = 0;
     public Member(String username, int password, String fullName, String address, String phone) {
@@ -14,6 +17,17 @@ public class Member extends User {
         this.phone = phone;
         this.id = memberNumber++;
         this.borrowedMovies = new String[10];
+        for(int i = 0; i < 10; i++){
+            borrowedMovies[i] = "Empty";
+        }
+    }
+
+    public String[] getBorrowedMovies() {
+        return borrowedMovies;
+    }
+
+    public void setBorrowedMovies(String[] borrowedMovies) {
+        this.borrowedMovies = borrowedMovies;
     }
 
     public String getFullName() {

@@ -15,7 +15,7 @@ public class StaffMenu implements Menu{
         System.out.println("4. Find a member’s contact phone number, given the member’s full name");
     }
 
-    public Object[] newMovieInputs(){
+    public Object[] getMovieInputs(){
         Object[] inputs = new Object[2];
         MovieType movieType = new MovieType();
         Scanner movieInput = new Scanner(System.in);
@@ -47,7 +47,7 @@ public class StaffMenu implements Menu{
         return inputs;
     }
 
-    public void nextMove(){
+    public void getNextMove(){
         System.out.println("What do you want to do next?");
         System.out.println("1. Back to Staff Menu");
         System.out.println("2. Back to Main Menu");
@@ -55,7 +55,7 @@ public class StaffMenu implements Menu{
         System.out.print("Your choice: ");
     }
 
-    public void StaffLogin(){
+    public void staffLogin(){
         Scanner staffInput = new Scanner(System.in);
         String username;
         int password;

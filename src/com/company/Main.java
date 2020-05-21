@@ -5,6 +5,7 @@ import Menu.MemberMenu;
 import Menu.StaffMenu;
 import Movie.Movie;
 import Movie.MovieType;
+import Movie.Node;
 import Movie.MovieCollection;
 import User.Member;
 import User.MemberCollection;
@@ -16,9 +17,9 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        MemberCollection list =  MemberCollection.getList();
-        list.addMember(new Member("mytam",1234,"My Tam","Kelvin Grove","0123456789"));
-        list.addMember(new Member("damvinhhung",1234,"Dam Vinh Hung","Kelvin Grove","0123456789"));
+        MemberCollection memberList =  MemberCollection.getList();
+        memberList.addMember(new Member("mytam",1234,"My Tam","Kelvin Grove","0123456789"));
+        memberList.addMember(new Member("damvinhhung",1234,"Dam Vinh Hung","Kelvin Grove","1234123"));
 
         StaffMenu staffMenu = new StaffMenu();
         MemberMenu memberMenu = new MemberMenu();
@@ -28,30 +29,30 @@ public class Main {
 
         MovieCollection movieList = new MovieCollection();
 
-        mainMenu.getMenu();
         Scanner scan1 = new Scanner(System.in);
-        System.out.print("Please enter your choice: ");
+
         int choice = -1;
-        while(choice != 0){
+        outside: while(choice != 0){
+            mainMenu.getMenu();
+            System.out.print("Please enter your choice: ");
             choice = scan1.nextInt();
             switch (choice){
                 case 1:
-                    staffMenu.StaffLogin();
+                    staffMenu.staffLogin();
                     staffMenu.getMenu();
                     inner: while (true){
                         System.out.print("Please enter your choice: ");
                         choice = scan1.nextInt();
-                        if (choice == -2) break inner;
                         switch (choice){
                             case 1:
                                 Scanner movieInput = new Scanner(System.in);
                                 int numberOfCopies;
                                 Movie newMovie;
-                                Object[] staffInputs = staffMenu.newMovieInputs();
+                                Object[] staffInputs = staffMenu.getMovieInputs();
                                 movieList.addMovieNode((Movie)staffInputs[0],(int)staffInputs[1]);
                                 System.out.println("Movie added! Current movie list:");
                                 movieList.getAllMovies(movieList.getRootMovie());
-                                staffMenu.nextMove();
+                                staffMenu.getNextMove();
                                 int option = movieInput.nextInt();
                                 switch (option){
                                     case 1:
@@ -69,33 +70,60 @@ public class Main {
                                 String titleDelete = movieDeleteInput.nextLine();
                                 Boolean result = movieList.deleteMovie(titleDelete);
                                 System.out.println(result ? "The movie is deleted!" : "Sorry, the movie is not exist!");
+                                staffMenu.getNextMove();
+                                option = movieDeleteInput.nextInt();
+                                switch (option){
+                                    case 1:
+                                        staffMenu.getMenu();
+                                        continue inner;
+                                    case 2:
+                                        break inner;
+                                    case 3:
+                                        return;
+                                }
                                 break ;
                             case 3:
-                                Scanner scan3 = new Scanner(System.in);
-                                System.out.println("Please enter the user credentials: ");
-                                System.out.print("Full Name: ");
-                                String newName = scan3.next();
-                                System.out.print("Address: ");
-                                String newAddress = scan3.next();
-                                System.out.print("Phone: ");
-                                String newPhone = scan3.next();
-                                System.out.print("Username: ");
-                                String newUserName = scan3.next();
-                                System.out.print("Password: ");
-                                int newPassword = scan3.nextInt();
-                                list.addMember(new Member(newUserName,newPassword,newName,newAddress,newPhone));
+                                Scanner memberInput = new Scanner(System.in);
+                                memberList.addMember(memberMenu.getMemberInputs());
+                                System.out.println("Member has been registered! \n"
+                                +"List of all members: \n");
+                                memberList.getAllMembers();
+                                staffMenu.getNextMove();
+                                option = memberInput.nextInt();
+                                switch (option){
+                                    case 1:
+                                        staffMenu.getMenu();
+                                        continue inner;
+                                    case 2:
+                                        break inner;
+                                    case 3:
+                                        return;
+                                }
                                 break;
 
                             case 4:
-                                Scanner scan4 = new Scanner(System.in);
+                                Scanner memberInputs = new Scanner(System.in);
                                 System.out.print("Please enter the member full name: ");
-                                String name = scan4.nextLine();
-                                Member foundMember = list.searchMember(name);
+                                String name = memberInputs.nextLine();
+                                Member foundMember = memberList.searchMember(name);
                                 if(foundMember == null){
                                     System.out.println("Sorry, user not found!");
-                                    break;
+                                }else{
+                                    System.out.println("The member contact info: \n"
+                                           + "1. Phone number: " + foundMember.getPhone() + "\n"
+                                           + "2. Address: " + foundMember.getAddress() + "\n");
                                 }
-                                System.out.println("The member contact info : " + foundMember.getPhone());
+                                staffMenu.getNextMove();
+                                option = memberInputs.nextInt();
+                                switch (option){
+                                    case 1:
+                                        staffMenu.getMenu();
+                                        continue inner;
+                                    case 2:
+                                        break inner;
+                                    case 3:
+                                        return;
+                                }
                                 break;
                             default:
                                 System.out.println("Invalid choice, please choose again!");
@@ -107,14 +135,39 @@ public class Main {
                     System.out.print("Please enter your choice :");
                     break;
                 case 2:
+                    Boolean isAuth = true;
+                    isAuth = memberMenu.memberLogin(memberList);
+                    if(isAuth){
+                        System.out.println("=============================Login in successful!=============================\n");
+                    }else{
+                        continue outside;
+                    }
                     memberMenu.getMenu();
-                    System.out.print("Please enter your choice: ");
                     inner: while (true){
+                        System.out.print("Please enter your choice: ");
                         choice = scan1.nextInt();
-                        if (choice == -2) break inner;
                         switch (choice){
                             case 1:
+                                if(movieList.getRootMovie() == null){
+                                    System.out.println("Sorry, there's no movie in the list yet!");
+                                }else{
+                                    movieList.getAllMovies(movieList.getRootMovie());
+                                }
+                                memberMenu.getNextMove();
+                                int option = scan1.nextInt();
+                                switch (option){
+                                    case 1:
+                                        staffMenu.getMenu();
+                                        continue inner;
+                                    case 2:
+                                        break inner;
+                                    case 3:
+                                        return;
+                                }
                                 break;
+                            case 2:
+                                Node borrowMovie = memberMenu.getBorrowMovie(movieList);
+
                             case 3:
                                 break;
 
