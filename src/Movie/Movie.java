@@ -1,4 +1,7 @@
 package Movie;
+
+import java.util.Arrays;
+
 public class Movie {
     private String title;
     private String starring;
@@ -7,6 +10,7 @@ public class Movie {
     private MovieType.Genre genre;
     private MovieType.Classification classification;
     private String releaseDate;
+    private int borrowedTime;
 
     public String getTitle() {
         return title;
@@ -64,6 +68,15 @@ public class Movie {
         this.releaseDate = releaseDate;
     }
 
+    public int getBorrowedTime(){
+        return this.borrowedTime;
+    }
+
+    public void isBorrowed(){
+        int newBorrowedTime = this.borrowedTime + 1;
+        this.borrowedTime = newBorrowedTime;
+    }
+
     public Movie(String title, String starring, String director, String duration, MovieType.Genre genre, MovieType.Classification classification, String releaseDate){
         this.title = title;
         this.starring = starring;
@@ -72,18 +85,47 @@ public class Movie {
         this.genre = genre;
         this.classification = classification;
         this.releaseDate = releaseDate;
+        this.borrowedTime = 0;
+    }
+    public static void main(String[] args) {
+        Movie movie2 = new Movie("b","b","b","b", MovieType.Genre.ACTION, MovieType.Classification.PG,"b");
+        Movie movie1 = new Movie("a","a","a","a", MovieType.Genre.ACTION, MovieType.Classification.PG,"a");
+        Movie movie4 = new Movie("b","b","b","b", MovieType.Genre.ACTION, MovieType.Classification.PG,"b");
+        Movie movie3 = new Movie("b","b","b","b", MovieType.Genre.ACTION, MovieType.Classification.PG,"b");
+        Movie movie5 = new Movie("b","b","b","b", MovieType.Genre.ACTION, MovieType.Classification.PG,"b");
+        movie2.isBorrowed();
+        movie2.isBorrowed();
+        movie1.isBorrowed();
+        movie3.isBorrowed();
+        movie3.isBorrowed();
+        movie3.isBorrowed();
+        movie4.isBorrowed();
+        movie4.isBorrowed();
+        movie4.isBorrowed();
+        movie4.isBorrowed();
+        movie5.isBorrowed();
+        movie5.isBorrowed();
+        movie5.isBorrowed();
+        movie5.isBorrowed();
+        movie5.isBorrowed();
+        Movie[] movieList = new Movie[5];
+        movieList[0] = movie2;
+        movieList[1] = movie1;
+        movieList[2] = movie4;
+        movieList[3] = movie3;
+        movieList[4] = movie5;
     }
 
     @Override
     public String toString() {
-        return "Movie{" +
-                "title='" + title + '\'' +
-                ", starring='" + starring + '\'' +
-                ", director='" + director + '\'' +
-                ", duration='" + duration + '\'' +
-                ", genre='" + genre + '\'' +
-                ", classification='" + classification + '\'' +
-                ", releaseDate='" + releaseDate + '\'' +
-                '}';
+        return
+                "Title='" + title + '\'' +
+                ", Starring='" + starring + '\'' +
+                ", Director='" + director + '\'' +
+                ", Duration='" + duration + '\'' +
+                ", Genre='" + genre + '\'' +
+                ", Classification='" + classification + '\'' +
+                ", ReleaseDate='" + releaseDate + '\''
+                ;
     }
 }

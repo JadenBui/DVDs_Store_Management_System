@@ -16,8 +16,8 @@ public class Member extends User {
         this.address = address;
         this.phone = phone;
         this.id = memberNumber++;
-        this.borrowedMovies = new String[10];
-        for(int i = 0; i < 10; i++){
+        this.borrowedMovies = new String[20];
+        for(int i = 0; i < 20; i++){
             borrowedMovies[i] = "Empty";
         }
     }
