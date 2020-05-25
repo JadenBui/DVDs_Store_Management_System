@@ -26,6 +26,41 @@ public class Member extends User {
         return borrowedMovies;
     }
 
+    public boolean movieInBorrowList(String title){
+        for(int i = 0; i < this.getBorrowedMovies().length; i++){
+            if(title.toLowerCase().compareTo(this.getBorrowedMovies()[i].toLowerCase()) == 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //check if the current borrowing list still have spot to borrow
+    public boolean borrowListFull(){
+        String[] listBorrowedMovie = this.getBorrowedMovies();
+        for(int i = 0; i < listBorrowedMovie.length; i++){
+            if(listBorrowedMovie[i].compareTo("Empty") == 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //check if the current borrowing list is empty
+    public boolean borrowListIsEmpty(){
+        String[] listBorrowedMovie = this.getBorrowedMovies();
+        int count = 0;
+        for(int i = 0; i < listBorrowedMovie.length; i++){
+            if(listBorrowedMovie[i].compareTo("Empty") == 0){
+                count++;
+            }
+        }
+        if(count == getBorrowedMovies().length){
+            return true;
+        }
+        return false;
+    }
+
     public void setBorrowedMovies(String[] borrowedMovies) {
         this.borrowedMovies = borrowedMovies;
     }

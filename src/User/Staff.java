@@ -1,8 +1,11 @@
 package User;
 
-public class Staff extends User{
-    public Staff(String username, int password) {
-        super(username, password);
+public class Staff{
+    String username;
+    String password;
+    public Staff(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
 }

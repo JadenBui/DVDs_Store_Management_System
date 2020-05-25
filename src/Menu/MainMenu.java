@@ -23,6 +23,7 @@ public class MainMenu implements Menu{
                 return pick;
             }catch (InputMismatchException e){
                 System.out.println("Invalid input, number only!");
+                System.out.print("Your choice: ");
                 input.next();
                 continue getInput;
             }
@@ -41,7 +42,7 @@ public class MainMenu implements Menu{
             }else if(choice.toLowerCase().compareTo("n") == 0){
                 return "n";
             }else{
-                System.out.println("Invalid choice! Please choose Y or N");
+                System.out.println("Invalid choice! Please choose Y or N: ");
                 continue getInputs;
             }
         }while(true);

@@ -5,78 +5,25 @@ import Menu.MemberMenu;
 import Menu.StaffMenu;
 import Movie.Movie;
 import Movie.MovieType;
-import Movie.Node;
 import Movie.MovieCollection;
 import User.Member;
 import User.MemberCollection;
 
-import javax.sound.midi.Soundbank;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        MemberCollection memberList =  MemberCollection.getList();
-
-        memberList.addMember(new Member("mytam",1234,"My Tam","Kelvin Grove","0123456789"));
-        memberList.addMember(new Member("damvinhhung",1234,"Dam Vinh Hung","Kelvin Grove","1234123"));
-
+        //initialize menu
         StaffMenu staffMenu = new StaffMenu();
         MemberMenu memberMenu = new MemberMenu();
         MainMenu mainMenu = new MainMenu();
 
-        MovieType movieType = new MovieType();
+        //initialize member collection
+        MemberCollection memberList =  MemberCollection.getList();
 
+        //initialize movie collection
         MovieCollection movieList = new MovieCollection();
-
-        Movie Kaite = new Movie("Kaite Sexy",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-        Movie Gorilla = new Movie("Gorilla Amazing",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-        Movie Dog = new Movie("Dog Adventure",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-        Movie Bee = new Movie("Bee Animal",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-        Movie Funny = new Movie("Funny Guy",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-        Movie Elephant = new Movie("Elephant Wing",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-        Movie Incredible = new Movie("Incredible Family",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-
-        Movie Quantum = new Movie("Quantum Science",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-
-        Movie Zelda = new Movie("Zelda Warrior",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-
-        Movie Warrior = new Movie("Warrior Ultimate",
-                "Chris Evan","Two brothers","120",
-                MovieType.Genre.ACTION, MovieType.Classification.PG,"20/01/2019");
-
-        movieList.addMovieNode(Kaite,150);
-        movieList.addMovieNode(Gorilla,151);
-        movieList.addMovieNode(Dog,1502);
-        movieList.addMovieNode(Bee,15012);
-        movieList.addMovieNode(Funny,1501);
-        movieList.addMovieNode(Elephant,1505);
-        movieList.addMovieNode(Incredible,252);
-        movieList.addMovieNode(Quantum,2532);
-        movieList.addMovieNode(Zelda,6543);
-        movieList.addMovieNode(Warrior,5464);
-
-
-        Scanner scan1 = new Scanner(System.in);
 
         int choice = -1;
         boolean askNext = false;
@@ -85,6 +32,7 @@ public class Main {
             choice = mainMenu.getValidIntInput();
             switch (choice){
                 case 1:
+                    //login
                     staffMenu.staffLogin();
                     staffMenu.getMenu();
                     inner: while (true){
@@ -96,36 +44,46 @@ public class Main {
                         switch (choice){
                             case -1:
                                 continue outside;
+                            //add new movie
                             case 1:
-                                Object[] staffInputs = staffMenu.getMovieInputs();
-                                movieList.addMovieNode((Movie)staffInputs[0],(int)staffInputs[1]);
-                                System.out.println("Movie added! Current movie list:");
+                                Object[] staffInputs = staffMenu.getMovieInputs(movieList);
+                                if(staffInputs == null){
+                                    System.out.println("Movie updated! Current movie list:");
+                                }else{
+                                    movieList.addMovieNode((Movie)staffInputs[0],(int)staffInputs[1]);
+                                    System.out.println("Movie added! Current movie list:");
+                                }
+                                System.out.println("========================================================== MOVIES ==========================================================");
                                 movieList.getAllMovies(movieList.getRootMovie());
+                                System.out.println("============================================================================================================================");
+                                //initial user next step
                                 askNext = true;
                                 break;
+
+                            //delete a movie
                             case 2:
                                 staffMenu.getDeleteMovie(movieList);
-                                staffMenu.getNextMove();
                                 askNext = true;
-
                                 break ;
+
+                            //register a member
                             case 3:
-                                Scanner memberInput = new Scanner(System.in);
-                                memberList.addMember(memberMenu.getMemberInputs());
+                                memberList.addMember(memberMenu.getNewMemberCredentials());
                                 System.out.println("Member has been registered! \n"
                                 +"List of all members: \n");
+                                System.out.println("======================================================= MEMBERS =======================================================");
                                 memberList.getAllMembers();
-                                staffMenu.getNextMove();
+                                System.out.println("=======================================================================================================================");
                                 askNext = true;
                                 break;
 
+                            //get contact detail
                             case 4:
                                 staffMenu.getContactDetail(memberList);
-                                staffMenu.getNextMove();
                                 askNext = true;
-
                                 break;
 
+                            //get user next case
                             case 99:
                                 askNext = false;
                                 staffMenu.getNextMove();
@@ -143,108 +101,82 @@ public class Main {
                                         default:
                                             goNext = false;
                                             System.out.println("Invalid choice!");
+                                            staffMenu.getNextMove();
                                             option = mainMenu.getValidIntInput();
                                     }
                                 }
                             default:
                                 System.out.println("Invalid choice, please choose again!");
                                 staffMenu.getMenu();
+                                continue inner;
                         }
                     }
                     break;
+
                 case 2:
                     String member;
+                    //login
+                    if(memberList.getMemberList()[0] == null){
+                        System.out.println("The member list is empty!");
+                        continue outside;
+                    }
                     member = memberMenu.memberLogin(memberList);
+
                     if(member != null){
                         System.out.println("=============================Login in successful!=============================\n");
+                        System.out.println("=============================Welcome "+member+"=============================\n");
                     }else{
                         continue outside;
                     }
+
                     memberMenu.getMenu();
                     inner: while (true){
-                        choice = mainMenu.getValidIntInput();
+                        if(askNext){
+                            choice = 99;
+                        }else{
+                            choice = mainMenu.getValidIntInput();
+                        }
                         switch (choice){
                             case -1:
                                 continue outside;
+
+                            //get all movies
                             case 1:
-                                if(movieList.getRootMovie() == null){
-                                    System.out.println("Sorry, there's no movie in the list yet!");
-                                }else{
-                                    movieList.getAllMovies(movieList.getRootMovie());
-                                }
+                                memberMenu.getAllMovies(movieList);
                                 askNext = true;
                                 break;
+
+                            //borrow a movie
                             case 2:
-                                Scanner borrowInput = new Scanner(System.in);
-                                if(movieList.getRootMovie() == null){
-                                    System.out.println("Sorry, there's no movie to borrow yet!");
-                                }else{
-                                    borrow: while(true){
-                                        Node borrowMovie = memberMenu.getBorrowMovie(movieList);
-                                        if(borrowMovie != null){
-                                            Member memberBorrow = memberList.searchMember(member);
-                                            memberList.borrowDVD(borrowMovie,memberBorrow);
-                                            break borrow;
-                                        }else{
-                                            System.out.println("Sorry, the movie is not exist!");
-                                            System.out.print("Try again (Y/N) ? : ");
-                                            String retry = borrowInput.nextLine();
-                                            if(retry.toLowerCase().compareTo("y") == 0){
-                                                continue borrow;
-                                            }else{
-                                                break borrow;
-                                            }
-                                        }
-                                    }
-                                }
-
+                                memberMenu.getBorrowMovie(movieList,memberList,member);
                                 askNext = true;
                                 break;
+
+                            //return a movie
                             case 3:
-                                Scanner returnInput = new Scanner(System.in);
-                                Member currentMem = memberList.searchMember(member);
-                                if(currentMem.getBorrowedMovies()[0].compareTo("Empty") == 0){
-                                    System.out.println("You have not borrow any movie!");
-                                }else{
-                                    returnMovie: while(true){
-                                        Boolean isReturned = memberMenu.returnBorrowMovie(member,memberList,movieList);
-                                        if(isReturned == true){
-                                            System.out.println("You have successfully returned the movie!");
-                                            break returnMovie;
-                                        }else{
-                                            System.out.print("Return the movie failed! \n"
-                                                    +"Try again? : ");
-                                            String retry = returnInput.nextLine();
-                                            if(retry.toLowerCase().compareTo("y") == 0){
-                                                continue returnMovie;
-                                            }else{
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-
+                                memberMenu.returnBorrowMovie(memberList, movieList, member);
                                 askNext = true;
-
                                 break;
 
+                            //display current borrowed movies
                             case 4:
                                 Member currentMember = memberList.searchMember(member);
                                 memberList.displayAllBorrowedMovies(currentMember);
-                                memberMenu.getNextMove();
                                 askNext = true;
-
                                 break;
 
+                            //display top 10 movies
                             case 5:
                                 if(movieList.getRootMovie() == null){
                                     System.out.println("Please add movie in first!");
                                 }else{
-                                    movieList.getMovieRanking();
+                                    System.out.println("====================================================================== TOP MOVIES ======================================================================");
+                                    movieList.getMovieRanking(movieList.getRootMovie());
+                                    System.out.println("========================================================================================================================================================");
                                 }
                                 askNext = true;
                                 break;
-                                
+
                             case 99:
                                 askNext = false;
                                 memberMenu.getNextMove();
@@ -253,7 +185,7 @@ public class Main {
                                 while(!goNext){
                                     switch (option){
                                         case 1:
-                                            staffMenu.getMenu();
+                                            memberMenu.getMenu();
                                             continue inner;
                                         case 2:
                                             break inner;
@@ -262,6 +194,7 @@ public class Main {
                                         default:
                                             goNext = false;
                                             System.out.println("Invalid choice!");
+                                            memberMenu.getNextMove();
                                             option = mainMenu.getValidIntInput();
                                     }
                                 }
@@ -277,7 +210,6 @@ public class Main {
                     break;
                 default:
                     System.out.println("Invalid choice, please choose again!");
-                    System.out.print("Please enter your choice :");
             }
         }
         System.out.println("==========================THANK YOU FOR USING OUR SOFTWARE!==========================");

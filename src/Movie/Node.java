@@ -43,21 +43,12 @@ public class Node {
         this.rightNode = rightNode;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Node{" +
-//                "movie=" + movie.getTitle() +
-//                " ,numberOfDvd=" + numberOfDvd +
-//                ", leftNode=" + leftNode +
-//                ", rightNode=" + rightNode +
-//                '}';
-//    }
     @Override
     public String toString() {
-        return "{" +
+        return
                 "Title= '" + movie.getTitle() +
                 "' ,Copies='" + numberOfDvd +
                 "', Movie Detail='" + movie +
-                "'"+'}';
+                "'";
     }
 }

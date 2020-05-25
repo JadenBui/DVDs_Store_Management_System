@@ -1,13 +1,10 @@
 package Menu;
 
-import Movie.Movie;
 import Movie.MovieCollection;
 import Movie.Node;
 import User.Member;
 import User.MemberCollection;
 
-import java.util.Arrays;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MemberMenu implements Menu{
@@ -20,12 +17,28 @@ public class MemberMenu implements Menu{
         System.out.println("4. List all current borrowed movie DVDSs");
         System.out.println("5. Display top 10 most popular movies");
         System.out.println("-1. Return to main Menu");
+        System.out.println("====================================================");
+        System.out.print("Please enter your choice: ");
     }
 
+    //Get all movies in the system
+    public void getAllMovies(MovieCollection movieCollection){
+        if(movieCollection.getRootMovie() == null){
+            System.out.println("Sorry, there's no movie in the library yet!");
+        }else{
+            System.out.println("======================================================================== MOVIES ========================================================================");
+            movieCollection.getAllMovies(movieCollection.getRootMovie());
+            System.out.println("========================================================================================================================================================");
+        }
+    }
+
+    //Login helper function for member
     public String memberLogin(MemberCollection memberCollection){
+        MainMenu mainMenu = new MainMenu();
         Scanner memberInput = new Scanner(System.in);
         String username;
         int password;
+        System.out.println("====================== Login ======================");
         inner :do{
             System.out.print("username: ");
             username = memberInput.nextLine();
@@ -37,8 +50,8 @@ public class MemberMenu implements Menu{
                 break;
             }else{
                 System.out.print("Sorry, user not found! \n"+
-                        "Try again? (Y/N): ");
-                String choice = memberInput.nextLine();
+                        "Try again? (Y/N) \n");
+                String choice = mainMenu.getValidStringInput();
                 if(choice.equals("y")){
                     continue inner;
                 }else{
@@ -48,62 +61,106 @@ public class MemberMenu implements Menu{
         }while (true);
 
          do{
-            try{
-                System.out.print("password: ");
-                password = memberInput.nextInt();
-                if(password == memberCollection.searchMember(username).getPassword()){
-                    return username;
-                }else{
-                    System.out.println("Wrong password!");
-                }
-            }catch (InputMismatchException e){
-                System.out.println("Invalid input, please type in number only!");
-                memberInput.next();
-            }
+             System.out.print("password: ");
+             password = mainMenu.getValidIntInput();
+             if(password == memberCollection.searchMember(username).getPassword()){
+                 System.out.println("===================================================");
+                 return username;
+             }else{
+                 System.out.println("Wrong password!");
+             }
         }while (true);
     }
 
+    //Get next choice of the user
     public void getNextMove(){
+        System.out.println("============================");
         System.out.println("What do you want to do next?");
         System.out.println("1. Back to Member Menu");
         System.out.println("2. Back to Main Menu");
         System.out.println("3. Exit program");
+        System.out.println("============================");
         System.out.print("Your choice: ");
     }
 
-    public Node getBorrowMovie(MovieCollection movieList) {
-        loop:
-        while (true) {
-            Scanner movieInput = new Scanner(System.in);
-            System.out.print("Please type in the movie title: ");
-            String movieTitle = movieInput.nextLine();
-            Node foundMovie = movieList.searchMovie(movieTitle);
-            return foundMovie;
-        }
-    }
-
-    public boolean returnBorrowMovie(String username,MemberCollection memberList, MovieCollection movieCollection){
-        Scanner inputMovie = new Scanner(System.in);
-        Member memberReturn = memberList.searchMember(username);
-        String[] borrowedMovieList = memberReturn.getBorrowedMovies();
-        if(borrowedMovieList[0].compareTo("Empty") == 0){
-            return false;
-        }
-        System.out.println("Here is your current borrowing list: ");
-        memberList.displayAllBorrowedMovies(memberReturn);
-        System.out.print("Please enter the movie title to return: ");
-        String returnMovie = inputMovie.nextLine();
-        for(int i = 0; i < borrowedMovieList.length; i++){
-            if(returnMovie.toLowerCase().compareTo(borrowedMovieList[i].toLowerCase()) == 0){
-                borrowedMovieList[i] = "Empty";
-                memberReturn.setBorrowedMovies(borrowedMovieList);
-                return true;
+    //Borrow movie
+    public void getBorrowMovie( MovieCollection movieCollection, MemberCollection memberCollection,String member){
+        MainMenu mainMenu = new MainMenu();
+        MemberMenu memberMenu = new MemberMenu();
+        if(movieCollection.getRootMovie() == null){
+            System.out.println("Sorry, there's no movie to borrow yet!");
+        }else{
+            borrow: while(true){
+                Node borrowMovie = memberMenu.searchBorrowMovie(movieCollection);
+                if(borrowMovie != null){
+                    Member memberBorrow = memberCollection.searchMember(member);
+                    if(memberBorrow.movieInBorrowList(borrowMovie.getMovie().getTitle())){
+                        System.out.println("You have already rent this movie!");
+                        break borrow;
+                    }
+                    memberCollection.borrowDVD(borrowMovie,memberBorrow);
+                    break borrow;
+                }else{
+                    System.out.println("Sorry, the movie is not exist!");
+                    System.out.println("Try again (Y/N) ?");
+                    String retry = mainMenu.getValidStringInput();
+                    if(retry.toLowerCase().compareTo("y") == 0){
+                        continue borrow;
+                    }else{
+                        break borrow;
+                    }
+                }
             }
         }
-        return false;
     }
 
-    public Member getMemberInputs(){
+
+    //Search for the movie to rent
+    public Node searchBorrowMovie(MovieCollection movieList) {
+        Scanner movieInput = new Scanner(System.in);
+        System.out.print("Please type in the movie title: ");
+        String movieTitle = movieInput.nextLine();
+        Node foundMovie = movieList.searchMovie(movieTitle);
+        if(foundMovie == null){
+            return  null;
+        }
+        return foundMovie;
+    }
+
+    //Return movie
+    public void returnBorrowMovie(MemberCollection memberCollection, MovieCollection movieCollection, String member){
+        MainMenu mainMenu = new MainMenu();
+        Scanner returnInput = new Scanner(System.in);
+        Member currentMem = memberCollection.searchMember(member);
+        if(movieCollection.getRootMovie() == null){
+            System.out.println("The movie library is empty!");
+            return;
+        }
+        if(currentMem.borrowListIsEmpty()){
+            System.out.println("You have not borrow any movie!");
+        }else{
+            returnMovie: while(true){
+                Boolean isReturned = memberCollection.returnBorrowedDVD(member,memberCollection,movieCollection);
+                if(isReturned == true){
+                    System.out.println("You have successfully returned the movie!");
+                    break returnMovie;
+                }else{
+                    System.out.print("Return the movie failed! \n"
+                            +"Try again ? (Y/N) \n");
+                    String retry = mainMenu.getValidStringInput();
+                    if(retry.toLowerCase().compareTo("y") == 0){
+                        continue returnMovie;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    //Get credentials of new user to register
+    public Member getNewMemberCredentials(){
+        MainMenu mainMenu = new MainMenu();
         Member newMember;
         Scanner memberInputs = new Scanner(System.in);
         System.out.println("Please enter the user credentials: ");
@@ -116,7 +173,7 @@ public class MemberMenu implements Menu{
         System.out.print("Username: ");
         String newUserName = memberInputs.nextLine();
         System.out.print("Password: ");
-        int newPassword = memberInputs.nextInt();
+        int newPassword = mainMenu.getValidIntInput();
         newMember = new Member(newUserName,newPassword,newName,newAddress,newPhone);
         return newMember;
     }
